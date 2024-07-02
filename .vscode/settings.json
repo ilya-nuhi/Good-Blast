@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "2022.3.14f1_2D(URP).sln"
+    "dotnet.defaultSolution": "Good-Blast.sln"
 }
