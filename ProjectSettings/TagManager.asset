@@ -38,6 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: GridFrame
+    uniqueID: 4076996843
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
