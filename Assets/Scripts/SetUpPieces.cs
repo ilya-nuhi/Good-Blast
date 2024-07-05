@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class SetUpPieces : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private ObjectPool objectPool;
-    [Header("Values")]
-    public GamePiece[,] m_allGamePieces;
     
     private int width;
     private int height;
@@ -16,12 +12,14 @@ public class SetUpPieces : MonoBehaviour
 
     void OnEnable()
     {
-        LevelLoader.LevelDataLoaded += OnLevelDataLoaded;
+        EventManager.Instance.OnLevelDataLoaded += OnLevelDataLoaded;
     }
 
     void OnDisable()
     {
-        LevelLoader.LevelDataLoaded -= OnLevelDataLoaded;
+        if (EventManager.Instance != null){
+            EventManager.Instance.OnLevelDataLoaded -= OnLevelDataLoaded;
+        }
     }
 
     private void OnLevelDataLoaded(LevelData levelData)
@@ -29,8 +27,9 @@ public class SetUpPieces : MonoBehaviour
         width = levelData.grid_width;
         height = levelData.grid_height;
         currentLevel = levelData;
-        m_allGamePieces = new GamePiece[height,width];
+        BoardManager.Instance.m_allGamePieces = new GamePiece[height,width];
         SetupGamePieces();
+        PieceManager.Instance.CheckPieceSprites();
     }
 
     void SetupGamePieces()
@@ -41,7 +40,7 @@ public class SetUpPieces : MonoBehaviour
             {
                 for (int x = 0; x < currentLevel.grid_width; x++)
                 {
-                    if (m_allGamePieces[y, x] == null)
+                    if (BoardManager.Instance.m_allGamePieces[y, x] == null)
                     {
                         if (currentLevel.grid[y][x] != null)
                         {
@@ -56,14 +55,14 @@ public class SetUpPieces : MonoBehaviour
 
     void PlaceGamePiece(string itemType, int x, int y)
     {
-        GameObject piece = objectPool.GetFromPool(itemType, x, y);
+        GameObject piece = ObjectPool.Instance.GetFromPool(itemType, x, y);
 
         if (piece != null)
         {
-            piece.transform.parent = transform;
+            piece.transform.parent = ObjectPool.Instance.transform;
             GamePiece gamePiece = piece.GetComponent<GamePiece>();
             gamePiece.SetCoord(x, y);
-            m_allGamePieces[y, x] = gamePiece;
+            BoardManager.Instance.m_allGamePieces[y, x] = gamePiece;
         }
     }
 

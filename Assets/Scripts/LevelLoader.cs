@@ -15,11 +15,10 @@ public class LevelData
 
 public class LevelLoader : Singleton<LevelLoader>
 {
-    public delegate void OnLevelDataLoaded(LevelData levelData);
-    public static event OnLevelDataLoaded LevelDataLoaded;
     [SerializeField] string serverUrl = "https://ilya-nuhi.github.io/GoodBlast-leveldata/"; // Base URL of my Github Page
     [SerializeField] int levelNumber = 1; // The level we want to get
     public LevelData currentLevelData;
+
     void Start()
     {
         string url = serverUrl + "Level_" + levelNumber + ".json";
@@ -63,7 +62,7 @@ public class LevelLoader : Singleton<LevelLoader>
             }
 
             // Notify all listeners that the level data is loaded
-            LevelDataLoaded?.Invoke(currentLevelData);
+            EventManager.Instance.LevelDataLoaded(currentLevelData);
             
         }
     }

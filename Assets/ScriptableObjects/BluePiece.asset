@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pieceName: blue
   pieceType: 0
+  isMovable: 1
   color: 3
   pieceSprites:
   - {fileID: 21300000, guid: c7f96e0c6471b654982f59e9754f33dc, type: 3}

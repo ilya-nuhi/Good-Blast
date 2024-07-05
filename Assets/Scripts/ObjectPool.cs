@@ -1,23 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPool : MonoBehaviour
+public class ObjectPool : Singleton<ObjectPool>
 {
-    [Header("References")]
-    [SerializeField] SetUpPieces setUpPieces;
     private Dictionary<string, Queue<GameObject>> poolDictionary;
 
     [SerializeField] private GamePieceFactory gamePieceFactory;
 
-    void Awake()
+    public override void Awake()
     {
+        base.Awake();
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
     }
 
     public GameObject GetFromPool(string itemType, int x, int y)
     {
         if(itemType == "rand"){
-            itemType = setUpPieces.currentLevel.rand_colors[Random.Range(0,setUpPieces.currentLevel.rand_colors.Length)];
+            itemType = BoardManager.Instance.currentLevelData.rand_colors[Random.Range(0,BoardManager.Instance.currentLevelData.rand_colors.Length)];
         }
         if (poolDictionary.ContainsKey(itemType) && poolDictionary[itemType].Count > 0)
         {
@@ -34,12 +33,24 @@ public class ObjectPool : MonoBehaviour
 
     public void ReturnToPool(GameObject objectToPool)
     {
-        string itemType = objectToPool.GetComponent<GamePiece>().data.pieceName;
+        string itemType = objectToPool.GetComponent<GamePiece>().DataSO.pieceName;
         objectToPool.SetActive(false);
         if (!poolDictionary.ContainsKey(itemType))
         {
             poolDictionary[itemType] = new Queue<GameObject>();
         }
         poolDictionary[itemType].Enqueue(objectToPool);
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var pool in poolDictionary)
+        {
+            while (pool.Value.Count > 0)
+            {
+                GameObject obj = pool.Value.Dequeue();
+                Destroy(obj);
+            }
+        }
     }
 }

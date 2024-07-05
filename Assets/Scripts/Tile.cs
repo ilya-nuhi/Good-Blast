@@ -4,26 +4,19 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] Board m_board;
-
-    [Header("Values")]
-    public int xIndex;
-    public int yIndex;
+    public int X_index {get; private set;}
+    public int Y_index {get; private set;}
     
 
     public void Init(int x, int y)
 	{
         
-		xIndex = x;
-		yIndex = y;
+		X_index = x;
+		Y_index = y;
 	}
 
 	void OnMouseDown()
 	{
-		if (m_board !=null)
-		{
-			m_board.ClickTile(this);
-		}
+		EventManager.Instance.TileClicked(this);
 	}
 }

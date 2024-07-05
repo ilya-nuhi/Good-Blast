@@ -5,6 +5,7 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
 {
 
 	static T m_instance;
+    protected static bool _isApplicationQuitting = false;
 
 	public static T Instance
 	{
@@ -14,7 +15,7 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
 			{
 				m_instance = GameObject.FindObjectOfType<T> ();
 
-				if (m_instance == null) 
+				if (m_instance == null && !_isApplicationQuitting) 
 				{
 					GameObject singleton = new GameObject (typeof(T).Name);
 					m_instance = singleton.AddComponent<T> ();
@@ -37,4 +38,9 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour
 			Destroy (gameObject);
 		}
 	}
+
+	protected virtual void OnApplicationQuit()
+    {
+        _isApplicationQuitting = true;
+    }
 }

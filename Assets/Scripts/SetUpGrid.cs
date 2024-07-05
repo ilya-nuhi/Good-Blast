@@ -7,7 +7,6 @@ using UnityEngine.Rendering;
 public class SetUpGrid : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] LevelLoader levelLoader;
     [SerializeField] GameObject tilePrefab;
     [SerializeField] GameObject gridFrame;
 
@@ -15,22 +14,22 @@ public class SetUpGrid : MonoBehaviour
     public int width;
     public int height;
 
-    Tile[,] m_allTiles;
     void OnEnable()
     {
-        LevelLoader.LevelDataLoaded += OnLevelDataLoaded;
+        EventManager.Instance.OnLevelDataLoaded += OnLevelDataLoaded;
     }
 
     void OnDisable()
     {
-        LevelLoader.LevelDataLoaded -= OnLevelDataLoaded;
+        if (EventManager.Instance != null){
+            EventManager.Instance.OnLevelDataLoaded -= OnLevelDataLoaded;
+        }
     }
-
     private void OnLevelDataLoaded(LevelData levelData)
     {
         width = levelData.grid_width;
         height = levelData.grid_height;
-        m_allTiles = new Tile[height, width];
+        BoardManager.Instance.m_allTiles = new Tile[height, width];
 
         SetupTiles();
         SetupCamera();
@@ -42,15 +41,15 @@ public class SetUpGrid : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (m_allTiles[j, i] == null)
+                if (BoardManager.Instance.m_allTiles[j, i] == null)
                 {
                     MakeTile(tilePrefab, i, j);
                 }
             }
         }
         //setting gridbackground
-        float gridPosX = (m_allTiles[0,width-1].transform.position.x + m_allTiles[0,0].transform.position.x)/2;
-        float gridPosY = (m_allTiles[height-1,0].transform.position.y + m_allTiles[0,0].transform.position.y)/2;
+        float gridPosX = (BoardManager.Instance.m_allTiles[0,width-1].transform.position.x + BoardManager.Instance.m_allTiles[0,0].transform.position.x)/2;
+        float gridPosY = (BoardManager.Instance.m_allTiles[height-1,0].transform.position.y + BoardManager.Instance.m_allTiles[0,0].transform.position.y)/2;
         GameObject gridBG = Instantiate(gridFrame, new Vector3(gridPosX, gridPosY, 0), Quaternion.identity);
         gridBG.GetComponent<SpriteRenderer>().size = new Vector2(width+0.4f,height+0.4f);
     }
@@ -61,9 +60,9 @@ public class SetUpGrid : MonoBehaviour
         {
             GameObject tile = Instantiate(prefab, new Vector3(x, y, z), Quaternion.identity) as GameObject;
             tile.name = "Tile (" + x + "," + y + ")";
-            m_allTiles[y, x] = tile.GetComponent<Tile>();
+            BoardManager.Instance.m_allTiles[y, x] = tile.GetComponent<Tile>();
             tile.transform.parent = transform;
-            m_allTiles[y, x].Init(x, y);
+            BoardManager.Instance.m_allTiles[y, x].Init(x, y);
         }
     }
 

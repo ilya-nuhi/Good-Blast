@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 307959a9afbc2bf47bce79c37aa6e2a0, type: 3}
   m_Name: BombPiece
   m_EditorClassIdentifier: 
+  pieceName: 
   pieceType: 2
-  color: {r: 0, g: 0, b: 0, a: 0}
+  isMovable: 1
+  color: 0
   pieceSprites: []
+  health: 0

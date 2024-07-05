@@ -3,7 +3,7 @@ using UnityEngine;
 
 public enum PieceType {
     normal,
-    box,
+    breakable,
     bomb
 }
 
@@ -22,6 +22,7 @@ public class GamePieceSO : ScriptableObject
 {
     public string pieceName;
     public PieceType pieceType;
+    public bool isMovable;
     public Color color;
     public Sprite[] pieceSprites;
     public int health;

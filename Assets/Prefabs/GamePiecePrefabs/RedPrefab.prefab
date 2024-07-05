@@ -97,4 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f87d2ac72fdb3644a1c0927909da4d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: e967c010e0c6b564f9c66fe41d257e09, type: 2}
+  dataSO: {fileID: 11400000, guid: e967c010e0c6b564f9c66fe41d257e09, type: 2}
+  xIndex: 0
+  yIndex: 0

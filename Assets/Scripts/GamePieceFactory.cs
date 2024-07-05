@@ -4,14 +4,13 @@ using UnityEngine;
 public class GamePieceFactory : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] SetUpPieces setUpPieces;
     [SerializeField] GameObject[] gamePiecePrefabs; // Assuming the prefabs are set in the inspector
 
     public GameObject CreateGamePiece(string itemName, int x, int y)
     {
         GameObject piece = null;
         foreach (var piecePrefab in gamePiecePrefabs){
-            if(piecePrefab.GetComponent<GamePiece>().data.pieceName == itemName){
+            if(piecePrefab.GetComponent<GamePiece>().DataSO.pieceName == itemName){
                 piece = Instantiate(piecePrefab, new Vector3(x,y,0), Quaternion.identity);
             }
         }
@@ -20,7 +19,7 @@ public class GamePieceFactory : MonoBehaviour
             piece.transform.parent = transform;
             GamePiece gamePiece = piece.GetComponent<GamePiece>();
             gamePiece.SetCoord(x,y);
-            setUpPieces.m_allGamePieces[y, x] = gamePiece;
+            gamePiece.Initialize();
         }
         else{
             Debug.LogWarning("Item type doesn't match.");
