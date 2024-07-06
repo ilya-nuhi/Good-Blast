@@ -40,7 +40,6 @@ public class LevelLoader : Singleton<LevelLoader>
         else
         {
             string dataAsJson = webRequest.downloadHandler.text;
-
             if (string.IsNullOrEmpty(dataAsJson))
             {
                 Debug.LogError("Downloaded JSON data is null or empty!");

@@ -8,6 +8,7 @@ public class SetUpGrid : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] GameObject tilePrefab;
+    //[SerializeField] GameObject groundPrefab;
     [SerializeField] GameObject gridFrame;
 
     [Header("Values")]
@@ -21,10 +22,12 @@ public class SetUpGrid : MonoBehaviour
 
     void OnDisable()
     {
-        if (EventManager.Instance != null){
+        if (EventManager.Instance != null)
+        {
             EventManager.Instance.OnLevelDataLoaded -= OnLevelDataLoaded;
         }
     }
+
     private void OnLevelDataLoaded(LevelData levelData)
     {
         width = levelData.grid_width;
@@ -34,6 +37,7 @@ public class SetUpGrid : MonoBehaviour
         SetupTiles();
         SetupCamera();
     }
+
 
     void SetupTiles()
     {
@@ -52,13 +56,18 @@ public class SetUpGrid : MonoBehaviour
         float gridPosY = (BoardManager.Instance.m_allTiles[height-1,0].transform.position.y + BoardManager.Instance.m_allTiles[0,0].transform.position.y)/2;
         GameObject gridBG = Instantiate(gridFrame, new Vector3(gridPosX, gridPosY, 0), Quaternion.identity);
         gridBG.GetComponent<SpriteRenderer>().size = new Vector2(width+0.4f,height+0.4f);
+        //setting ground
+        // GameObject ground = Instantiate(groundPrefab, new Vector3(gridPosX, -1, 0), Quaternion.identity);
+        // ground.name = "ground";
+        // ground.transform.parent = transform;
+        // ground.GetComponent<BoxCollider2D>().size = new Vector2(BoardManager.Instance.width, 1);
     }
 
     void MakeTile(GameObject prefab, int x, int y, int z = 0)
     {
         if (prefab != null && IsWithinBounds(x, y))
         {
-            GameObject tile = Instantiate(prefab, new Vector3(x, y, z), Quaternion.identity) as GameObject;
+            GameObject tile = Instantiate(prefab, new Vector3(x, y, z), Quaternion.identity);
             tile.name = "Tile (" + x + "," + y + ")";
             BoardManager.Instance.m_allTiles[y, x] = tile.GetComponent<Tile>();
             tile.transform.parent = transform;

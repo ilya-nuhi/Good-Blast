@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4512993627527012860}
   - component: {fileID: 6400704437360436814}
   - component: {fileID: -6528820942154567417}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Box0Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,4 +100,5 @@ MonoBehaviour:
   dataSO: {fileID: 11400000, guid: e9f6add9a182be54fa620682d67b449a, type: 2}
   xIndex: 0
   yIndex: 0
+  m_isMoving: 0
   health: 0

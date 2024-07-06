@@ -20,7 +20,7 @@ public class BreakablePiece : GamePiece , IDestructible
         }
         else
         {
-            ObjectPool.Instance.ReturnToPool(this.gameObject);
+            DestroyPiece();
         }
     }
 }

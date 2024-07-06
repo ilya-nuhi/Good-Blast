@@ -7,7 +7,6 @@ public class EventManager : Singleton<EventManager>
     public event Action<LevelData> OnLevelDataLoaded;
     public event Action<Tile> OnTileClicked;
     public event Action<GamePiece> OnPieceBlasted;
-    public event Action<GamePiece> OnTntTriggered;
     public event Action<List<Tile>> OnCollapseAndRefill;
 
     public void LevelDataLoaded(LevelData levelData)
@@ -23,11 +22,6 @@ public class EventManager : Singleton<EventManager>
     public void PieceBlasted(GamePiece piece)
     {
         OnPieceBlasted?.Invoke(piece);
-    }
-
-    public void TntTriggered(GamePiece piece)
-    {
-        OnTntTriggered?.Invoke(piece);
     }
 
     public void CollapseAndRefill(List<Tile> emptyTiles)

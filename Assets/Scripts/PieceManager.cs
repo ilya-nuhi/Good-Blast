@@ -79,17 +79,20 @@ public class PieceManager : Singleton<PieceManager>
         if (IsWithinBounds(x, y))
         {
             GamePiece adjacentPiece = BoardManager.Instance.m_allGamePieces[y, x];
-            if (adjacentPiece != null && !matchingPieces.Contains(adjacentPiece) && !breakablePieces.Contains(adjacentPiece))
+            if (adjacentPiece != null && !adjacentPiece.m_isMoving)
             {
-                if (currentPiece.DataSO.color == adjacentPiece.DataSO.color )
-                {
-                    pieceQueue.Enqueue(adjacentPiece);
-                    matchingPieces.Add(adjacentPiece);
+                if(!matchingPieces.Contains(adjacentPiece) && !breakablePieces.Contains(adjacentPiece)){
+                    if (currentPiece.DataSO.color == adjacentPiece.DataSO.color )
+                    {
+                        pieceQueue.Enqueue(adjacentPiece);
+                        matchingPieces.Add(adjacentPiece);
+                    }
+                    else if (adjacentPiece.DataSO.pieceType == PieceType.breakable)
+                    {
+                        breakablePieces.Add(adjacentPiece);
+                    }
                 }
-                else if (adjacentPiece.DataSO.pieceType == PieceType.breakable)
-                {
-                    breakablePieces.Add(adjacentPiece);
-                }
+                
             }
         }
     }
@@ -169,7 +172,7 @@ public class PieceManager : Singleton<PieceManager>
         for(int i = 0; i < BoardManager.Instance.width; i++){
             for(int j = 0; j < BoardManager.Instance.height; j++){
                 GamePiece currentPiece = BoardManager.Instance.m_allGamePieces[j, i];
-                if(currentPiece!=null && currentPiece.DataSO.pieceType == PieceType.normal){
+                if(currentPiece!=null && !currentPiece.m_isMoving &&currentPiece.DataSO.pieceType == PieceType.normal){
                     if(!gamePieces.Contains(currentPiece)){
                         List<GamePiece> matchingPieces = new List<GamePiece>();
                         List<GamePiece> breakablePieces = new List<GamePiece>();

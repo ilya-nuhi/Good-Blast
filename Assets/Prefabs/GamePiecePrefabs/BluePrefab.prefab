@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4512993627527012860}
   - component: {fileID: 6400704437360436814}
   - component: {fileID: 5280999591809789810}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: BluePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,3 +100,4 @@ MonoBehaviour:
   dataSO: {fileID: 11400000, guid: 6502f489ae0ec4749b900ae7d3cb7f87, type: 2}
   xIndex: 0
   yIndex: 0
+  m_isMoving: 0

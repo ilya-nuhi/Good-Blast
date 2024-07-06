@@ -35,6 +35,7 @@ public class ObjectPool : Singleton<ObjectPool>
     {
         string itemType = objectToPool.GetComponent<GamePiece>().DataSO.pieceName;
         objectToPool.SetActive(false);
+        objectToPool.GetComponent<SpriteRenderer>().sprite = objectToPool.GetComponent<GamePiece>().DataSO.pieceSprites[0];
         if (!poolDictionary.ContainsKey(itemType))
         {
             poolDictionary[itemType] = new Queue<GameObject>();

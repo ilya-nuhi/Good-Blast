@@ -30,7 +30,7 @@ public class BoardManager : Singleton<BoardManager>
         GamePiece clickedPiece = PieceManager.Instance.GetPieceAt(tile.X_index, tile.Y_index);
         if (clickedPiece != null)
         {
-            if (clickedPiece.DataSO.pieceType == PieceType.normal)
+            if (clickedPiece.DataSO.pieceType == PieceType.normal && !clickedPiece.m_isMoving)
             {
                 EventManager.Instance.PieceBlasted(clickedPiece);
             }

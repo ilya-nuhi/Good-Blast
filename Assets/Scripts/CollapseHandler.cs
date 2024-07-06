@@ -28,7 +28,7 @@ public class CollapseHandler : Singleton<CollapseHandler>
         }
     }
 
-    private void CollapseColumn(int column, float collapseTime = 0.1f)
+    private void CollapseColumn(int column, float collapseTime = 0.5f)
     {
         for (int i = 0; i < BoardManager.Instance.height - 1; i++)
         {
@@ -38,15 +38,16 @@ public class CollapseHandler : Singleton<CollapseHandler>
                 {
                     if (BoardManager.Instance.m_allGamePieces[j, column] != null)
                     {
-                        if(BoardManager.Instance.m_allGamePieces[j, column].DataSO.isMovable){
-
-                            BoardManager.Instance.m_allGamePieces[j, column].Move(column, i, collapseTime * (j - i));
+                        if(BoardManager.Instance.m_allGamePieces[j, column].DataSO.isMovable)
+                        {
+                            BoardManager.Instance.m_allGamePieces[j, column].Move(column, i, collapseTime);
                             BoardManager.Instance.m_allGamePieces[i, column] = BoardManager.Instance.m_allGamePieces[j, column];
                             BoardManager.Instance.m_allGamePieces[i, column].SetCoord(column, i);
                             BoardManager.Instance.m_allGamePieces[j, column] = null;
                             break;
                         }
-                        else{
+                        else
+                        {
                             // Non-movable piece encountered; stop further checks for this column
                             break;
                         }
@@ -56,7 +57,7 @@ public class CollapseHandler : Singleton<CollapseHandler>
         }
     }
 
-    private void RefillColumn(int column, float refillTime = 0.1f)
+    private void RefillColumn(int column, float refillTime = 0.5f)
     {
         int falseYOffset = 0;
         int blockerIndex = -1;
@@ -78,14 +79,15 @@ public class CollapseHandler : Singleton<CollapseHandler>
         }
     }
 
-    private void RefillTile(int x, int y, int falseYOffset, float refillTime = 0.1f)
+    private void RefillTile(int x, int y, int falseYOffset, float refillTime = 0.5f)
     {
         string randItem = BoardManager.Instance.currentLevelData.rand_colors[Random.Range(0, BoardManager.Instance.currentLevelData.rand_colors.Length)];
         GameObject refillPiece = ObjectPool.Instance.GetFromPool(randItem, x, BoardManager.Instance.height + falseYOffset);
         refillPiece.transform.parent = ObjectPool.Instance.transform;
         GamePiece piece = refillPiece.GetComponent<GamePiece>();
-        piece.Move(x, y, refillTime * (BoardManager.Instance.height + falseYOffset - y));
+        piece.Move(x, y, refillTime);
         piece.SetCoord(x, y);
         BoardManager.Instance.m_allGamePieces[y, x] = piece;
     }
+
 }

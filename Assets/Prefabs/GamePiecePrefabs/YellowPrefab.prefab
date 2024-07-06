@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4512993627527012860}
   - component: {fileID: 6400704437360436814}
   - component: {fileID: 5280999591809789810}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: YellowPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,3 +100,4 @@ MonoBehaviour:
   dataSO: {fileID: 11400000, guid: e0ee5cb292eb76343a9197fafaa49fdc, type: 2}
   xIndex: 0
   yIndex: 0
+  m_isMoving: 0
