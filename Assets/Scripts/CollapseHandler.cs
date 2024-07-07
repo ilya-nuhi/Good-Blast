@@ -28,7 +28,7 @@ public class CollapseHandler : Singleton<CollapseHandler>
         }
     }
 
-    private void CollapseColumn(int column, float collapseTime = 0.5f)
+    private void CollapseColumn(int column, float collapseTime = 0.2f)
     {
         for (int i = 0; i < BoardManager.Instance.height - 1; i++)
         {
@@ -57,7 +57,7 @@ public class CollapseHandler : Singleton<CollapseHandler>
         }
     }
 
-    private void RefillColumn(int column, float refillTime = 0.5f)
+    private void RefillColumn(int column, float refillTime = 0.2f)
     {
         int falseYOffset = 0;
         int blockerIndex = -1;
@@ -79,10 +79,10 @@ public class CollapseHandler : Singleton<CollapseHandler>
         }
     }
 
-    private void RefillTile(int x, int y, int falseYOffset, float refillTime = 0.5f)
+    private void RefillTile(int x, int y, int falseYOffset, float refillTime = 0.2f)
     {
         string randItem = BoardManager.Instance.currentLevelData.rand_colors[Random.Range(0, BoardManager.Instance.currentLevelData.rand_colors.Length)];
-        GameObject refillPiece = ObjectPool.Instance.GetFromPool(randItem, x, BoardManager.Instance.height + falseYOffset);
+        GameObject refillPiece = ObjectPool.Instance.GetPieceFromPool(randItem, x, BoardManager.Instance.height + falseYOffset);
         refillPiece.transform.parent = ObjectPool.Instance.transform;
         GamePiece piece = refillPiece.GetComponent<GamePiece>();
         piece.Move(x, y, refillTime);

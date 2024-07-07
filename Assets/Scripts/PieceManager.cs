@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Collections;
 
 public class PieceManager : Singleton<PieceManager>
 {
@@ -39,11 +41,6 @@ public class PieceManager : Singleton<PieceManager>
         emptyTiles.AddRange(BreakPieces(breakablePieces));
 
         ClearPieces(matchingPieces);
-
-        // if (clickedPiece.GetComponent<SpriteRenderer>().sprite == clickedPiece.tntStateSprite)
-        // {
-        //     MakeTnt(clickedPiece.xIndex, clickedPiece.yIndex);
-        // }
 
         // Notify collapse manager to collapse and refill columns
         EventManager.Instance.CollapseAndRefill(emptyTiles);
@@ -108,8 +105,11 @@ public class PieceManager : Singleton<PieceManager>
         {
             if (piece != null)
             {
+                GameObject particleFX = ObjectPool.Instance.GetParticleFromPool(piece.particleFXName,
+                                                                                 piece.xIndex, piece.yIndex);
+                StartCoroutine(BlastParticlesRoutine(particleFX));
                 BoardManager.Instance.m_allGamePieces[piece.yIndex, piece.xIndex] = null;
-                ObjectPool.Instance.ReturnToPool(piece.gameObject);
+                ObjectPool.Instance.ReturnPieceToPool(piece.gameObject);
             }
         }
     }
@@ -126,13 +126,24 @@ public class PieceManager : Singleton<PieceManager>
                         clearedTiles.Add(BoardManager.Instance.m_allTiles[piece.yIndex, piece.xIndex]);
                         
                         BoardManager.Instance.m_allGamePieces[piece.yIndex, piece.xIndex] = null;
-                        ObjectPool.Instance.ReturnToPool(piece.gameObject);
+                        
+                        piece.DestroyPiece();
                     }
+                    GameObject particleFX = ObjectPool.Instance.GetParticleFromPool(piece.particleFXName,
+                                                                                 piece.xIndex, piece.yIndex);
+                    StartCoroutine(BlastParticlesRoutine(particleFX));
             }
                 
             
         }
         return clearedTiles;
+    }
+
+    IEnumerator BlastParticlesRoutine(GameObject particleFX)
+    {
+        particleFX.GetComponent<ParticleSystem>().Play();
+        yield return new WaitForSeconds(1);
+        ObjectPool.Instance.ReturnParticleToPool(particleFX);
     }
 
     private List<Tile> GetTilesOfPieces(List<GamePiece> gamePieces)

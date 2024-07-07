@@ -9,17 +9,19 @@ public interface IDestructible
     void TakeDamage(int amount);
 }
 
-
 public abstract class GamePiece : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GamePieceSO dataSO; // Assign this in the inspector
+	public string particleFXName;	// Assign this in the inspector
     public GamePieceSO DataSO => dataSO; // Public getter to access the dataSO
     [Header("Values")]
     public int xIndex;
     public int yIndex;
     public bool m_isMoving;
 	private Vector3 targetDestination;
+	private Vector3 startPosition;
+	private float totalTimeToMove;
     public abstract void Initialize();
 
     public void SetCoord(int x, int y)
@@ -33,20 +35,26 @@ public abstract class GamePiece : MonoBehaviour
     }
 
     public void Move (int destX, int destY, float timeToMove)
-    {
+    {	
+		float addedDistance = targetDestination.y-destY;
 		targetDestination = new Vector3(destX, destY, 0);
+		totalTimeToMove = timeToMove * (transform.position.y - targetDestination.y);
     	if (!m_isMoving)
     	{
-    		StartCoroutine(MoveRoutine(timeToMove));	
+    		StartCoroutine(MoveRoutine());	
     	}
-		// else{
-		// 	UpdateDestination(xIndex, yIndex);
-		// }
+		else{
+			totalTimeToMove += timeToMove*addedDistance*0.75f;
+			startPosition = transform.position;
+		}
     }
 
-    IEnumerator MoveRoutine(float timeToMove)
+    IEnumerator MoveRoutine()
     {
-    	Vector3 startPosition = transform.position;
+		// we can change the start position later when the below piece is blasted while we are already moving
+		// so we are storing the initial position of y in order to calculate bouncing power later
+    	startPosition = transform.position;
+		float initialStartY = startPosition.y;
 
     	bool reachedDestination = false;
 
@@ -61,7 +69,7 @@ public abstract class GamePiece : MonoBehaviour
     		{
     			reachedDestination = true;
 
-				yield return StartCoroutine(bouncePieceRoutine(startPosition.y-targetDestination.y));
+				yield return StartCoroutine(BouncePieceRoutine(initialStartY-targetDestination.y));
 
     			PieceManager.Instance.PlaceGamePiece(this, Mathf.RoundToInt(targetDestination.x), Mathf.RoundToInt(targetDestination.y));
 
@@ -72,10 +80,9 @@ public abstract class GamePiece : MonoBehaviour
     		elapsedTime += Time.deltaTime;
 
     		// calculate the Lerp value
-    		float t = Mathf.Clamp(elapsedTime / timeToMove, 0f, 1f);
-
-    		//t =  t*t*t*(t*(t*6 - 15) + 10);
-			t = t*t;
+    		float t = Mathf.Clamp(elapsedTime / totalTimeToMove, 0f, 1f);
+			// ease-in function to give the gravity feeling 
+			t = t*t*t;
 
     		// move the game piece
     		transform.position = Vector3.Lerp(startPosition, targetDestination, t);
@@ -88,15 +95,37 @@ public abstract class GamePiece : MonoBehaviour
 		PieceManager.Instance.CheckPieceSprites();
     }
 
-	public void UpdateDestination(int newDestX, int newDestY)
+	IEnumerator BouncePieceRoutine(float fallDistance)
     {
-		Debug.Log($"eski taş {this.gameObject.name} {newDestX} {newDestY} yerine gçeiyor.");
-        targetDestination = new Vector3(newDestX, newDestY, 0);
-    }
+        // Calculate bounce height and number of bounces
+        float bounceHeight = fallDistance * 0.1f; // Adjust this multiplier for desired bounce height
+        float bounceDuration = 0.1f + bounceHeight * 0.1f; // Duration of each bounce
 
-	IEnumerator bouncePieceRoutine(float fallDistance){
-		yield return null;
-	}
+		float startTime = Time.time;
+		Vector3 bounceStart = transform.position;
+		Vector3 bounceEnd = new Vector3(bounceStart.x, bounceStart.y + bounceHeight, 0);
+
+		while (Time.time < startTime + bounceDuration)
+		{
+			float t = (Time.time - startTime) / bounceDuration;
+			t = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease out
+			transform.position = Vector3.Lerp(bounceStart, bounceEnd, t);
+			yield return null;
+		}
+
+		startTime = Time.time;
+		bounceStart = transform.position;
+		bounceEnd = new Vector3(bounceStart.x, targetDestination.y, 0);
+
+		while (Time.time < startTime + bounceDuration)
+		{
+			float t = (Time.time - startTime) / bounceDuration;
+			t = 1 - Mathf.Cos(t * Mathf.PI * 0.5f); // Ease in
+			transform.position = Vector3.Lerp(bounceStart, bounceEnd, t);
+			yield return null;
+		}
+        
+    }
 
 
 }

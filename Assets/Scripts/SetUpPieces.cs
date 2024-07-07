@@ -55,7 +55,7 @@ public class SetUpPieces : MonoBehaviour
 
     void PlaceGamePiece(string itemType, int x, int y)
     {
-        GameObject piece = ObjectPool.Instance.GetFromPool(itemType, x, y);
+        GameObject piece = ObjectPool.Instance.GetPieceFromPool(itemType, x, y);
 
         if (piece != null)
         {

@@ -204,7 +204,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.1764706, g: 0.7372549, b: 0.89019614, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 00000000eb0802f3
+  m_ApplyToSortingLayers: 00000000eb0802f3b9847ce2
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -442,6 +442,14 @@ MonoBehaviour:
   - {fileID: 2624688763895121702, guid: 12afa000aaafb0e45a8afa693f113477, type: 3}
   - {fileID: 2624688763895121702, guid: 71ada953d89ae6141958179c69a15bfc, type: 3}
   - {fileID: 2624688763895121702, guid: 5b4bb2d802f189747ab415ccb2e0422b, type: 3}
+  particleFXPrefabs:
+  - {fileID: 7383745283159179784, guid: f91c5652c009ba041989590a44249c55, type: 3}
+  - {fileID: 7383745283159179784, guid: 5e3039c81e5d3cf43a1ec60af2738c7e, type: 3}
+  - {fileID: 7383745283159179784, guid: 91d4357936d56ad4a935558bd75cf95b, type: 3}
+  - {fileID: 7383745283159179784, guid: 3ae3a981dc4db7443abdd7a202277ae7, type: 3}
+  - {fileID: 7383745283159179784, guid: 65646a30007fd6b46bdc90ff22e3219c, type: 3}
+  - {fileID: 7383745283159179784, guid: 442608d328d160344a6b4a48d64ca045, type: 3}
+  - {fileID: 7383745283159179784, guid: 0088ccc6e0800c546b03d0472d464221, type: 3}
 --- !u!114 &825238158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87b9f1336766c7e489dcce9a09e2bd0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePieceFactory: {fileID: 825238157}
+  gameObjectFactory: {fileID: 825238157}
 --- !u!1 &1278133653
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,49 +3,78 @@ using UnityEngine;
 
 public class ObjectPool : Singleton<ObjectPool>
 {
-    private Dictionary<string, Queue<GameObject>> poolDictionary;
+    private Dictionary<string, Queue<GameObject>> piecePoolDictionary;
+    private Dictionary<string, Queue<GameObject>> particleFXPoolDictionary;
 
-    [SerializeField] private GamePieceFactory gamePieceFactory;
+    [SerializeField] private GameObjectFactory gameObjectFactory;
 
     public override void Awake()
     {
         base.Awake();
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
+        piecePoolDictionary = new Dictionary<string, Queue<GameObject>>();
+        particleFXPoolDictionary = new Dictionary<string, Queue<GameObject>>();
     }
 
-    public GameObject GetFromPool(string itemType, int x, int y)
+    public GameObject GetPieceFromPool(string itemType, int x, int y)
     {
         if(itemType == "rand"){
             itemType = BoardManager.Instance.currentLevelData.rand_colors[Random.Range(0,BoardManager.Instance.currentLevelData.rand_colors.Length)];
         }
-        if (poolDictionary.ContainsKey(itemType) && poolDictionary[itemType].Count > 0)
+        if (piecePoolDictionary.ContainsKey(itemType) && piecePoolDictionary[itemType].Count > 0)
         {
-            GameObject objectToReuse = poolDictionary[itemType].Dequeue();
+            GameObject objectToReuse = piecePoolDictionary[itemType].Dequeue();
             objectToReuse.SetActive(true);
             objectToReuse.transform.position = new Vector3(x, y, 0);
             return objectToReuse;
         }
         else
         {
-            return gamePieceFactory.CreateGamePiece(itemType, x, y);
+            return gameObjectFactory.CreateGamePiece(itemType, x, y);
         }
     }
 
-    public void ReturnToPool(GameObject objectToPool)
+    public void ReturnPieceToPool(GameObject objectToPool)
     {
         string itemType = objectToPool.GetComponent<GamePiece>().DataSO.pieceName;
         objectToPool.SetActive(false);
         objectToPool.GetComponent<SpriteRenderer>().sprite = objectToPool.GetComponent<GamePiece>().DataSO.pieceSprites[0];
-        if (!poolDictionary.ContainsKey(itemType))
+        if (!piecePoolDictionary.ContainsKey(itemType))
         {
-            poolDictionary[itemType] = new Queue<GameObject>();
+            piecePoolDictionary[itemType] = new Queue<GameObject>();
         }
-        poolDictionary[itemType].Enqueue(objectToPool);
+        piecePoolDictionary[itemType].Enqueue(objectToPool);
     }
+
+    public GameObject GetParticleFromPool(string itemType, int x, int y){
+        if (particleFXPoolDictionary.ContainsKey(itemType) && particleFXPoolDictionary[itemType].Count > 0)
+        {
+            GameObject objectToReuse = particleFXPoolDictionary[itemType].Dequeue();
+            objectToReuse.transform.position = new Vector3(x, y, 0);
+            objectToReuse.SetActive(true);
+            
+            return objectToReuse;
+        }
+        else
+        {
+            return gameObjectFactory.CreateParticleFX(itemType, x, y);
+        }
+    }
+
+    public void ReturnParticleToPool(GameObject objectToPool)
+    {
+        string itemType = objectToPool.GetComponent<Discriminator>().discriminatorName;
+        objectToPool.SetActive(false);
+        if (!particleFXPoolDictionary.ContainsKey(itemType))
+        {
+            particleFXPoolDictionary[itemType] = new Queue<GameObject>();
+        }
+        particleFXPoolDictionary[itemType].Enqueue(objectToPool);
+    }
+
 
     private void OnDestroy()
     {
-        foreach (var pool in poolDictionary)
+        foreach (var pool in piecePoolDictionary)
         {
             while (pool.Value.Count > 0)
             {
