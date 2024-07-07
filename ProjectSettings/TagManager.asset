@@ -38,6 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 4069872149
+    locked: 0
   - name: GridFrame
     uniqueID: 4076996843
     locked: 0

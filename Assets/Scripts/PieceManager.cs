@@ -44,7 +44,7 @@ public class PieceManager : Singleton<PieceManager>
 
         // Notify collapse manager to collapse and refill columns
         EventManager.Instance.CollapseAndRefill(emptyTiles);
-        CheckPieceSprites();
+        CheckSpritesAndDeadlock();
     }
 
     private (List<GamePiece>, List<GamePiece>) FindAdjacentMatches(GamePiece clickedPiece)
@@ -94,7 +94,7 @@ public class PieceManager : Singleton<PieceManager>
         }
     }
 
-    bool IsWithinBounds(int x, int y)
+    public bool IsWithinBounds(int x, int y)
     {
         return x >= 0 && x < BoardManager.Instance.width && y >= 0 && y < BoardManager.Instance.height;
     }
@@ -105,9 +105,14 @@ public class PieceManager : Singleton<PieceManager>
         {
             if (piece != null)
             {
+                // Play pop sound
+                SoundManager.Instance.PlayPoPSound();
+                // Create particle effect
                 GameObject particleFX = ObjectPool.Instance.GetParticleFromPool(piece.particleFXName,
                                                                                  piece.xIndex, piece.yIndex);
                 StartCoroutine(BlastParticlesRoutine(particleFX));
+                
+                // Clear piece from board and return to pool
                 BoardManager.Instance.m_allGamePieces[piece.yIndex, piece.xIndex] = null;
                 ObjectPool.Instance.ReturnPieceToPool(piece.gameObject);
             }
@@ -157,60 +162,67 @@ public class PieceManager : Singleton<PieceManager>
         return tiles;
     }
 
-    public void PlaceGamePiece(GamePiece gamePiece, int x, int y)
-    {
-        if (gamePiece == null)
-        {
-            Debug.LogWarning("BOARD:  Invalid GamePiece!");
-            return;
-        }
-
-        gamePiece.transform.position = new Vector3(x, y, 0);
-        gamePiece.transform.rotation = Quaternion.identity;
-
-        if (IsWithinBounds(x, y))
-        {
-            BoardManager.Instance.m_allGamePieces[y, x] = gamePiece;
-        }
-
-        gamePiece.SetCoord(x, y);
-    }
-
-    public void CheckPieceSprites()
+    public bool CheckSpritesAndDeadlock()
     {
         List<GamePiece> gamePieces = new List<GamePiece>();
-
+        bool isDeadlock = true;
+        bool isMovingPieceExist = false;
         for(int i = 0; i < BoardManager.Instance.width; i++){
             for(int j = 0; j < BoardManager.Instance.height; j++){
                 GamePiece currentPiece = BoardManager.Instance.m_allGamePieces[j, i];
-                if(currentPiece!=null && !currentPiece.m_isMoving &&currentPiece.DataSO.pieceType == PieceType.normal){
+                if(currentPiece!=null && currentPiece.DataSO.pieceType == PieceType.normal){
+                    if(currentPiece.m_isMoving){
+                        isMovingPieceExist = true;
+                        continue;
+                    }
                     if(!gamePieces.Contains(currentPiece)){
                         List<GamePiece> matchingPieces = new List<GamePiece>();
                         List<GamePiece> breakablePieces = new List<GamePiece>();
                         (matchingPieces, breakablePieces) = FindAdjacentMatches(BoardManager.Instance.m_allGamePieces[j, i]);
-                        if(matchingPieces.Count>A && matchingPieces.Count<=B){
-                            foreach(var piece in matchingPieces){
-                                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[1];
-                            }
+                        if(matchingPieces.Count>=2){
+                            isDeadlock = false;
                         }
-                        else if(matchingPieces.Count>B && matchingPieces.Count<=C){
-                            foreach(var piece in matchingPieces){
-                                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[2];
-                            }
-                        }
-                        else if(matchingPieces.Count>C){
-                            foreach(var piece in matchingPieces){
-                                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[3];
-                            }
-                        }
-                        else{   // Assigning default state sprites
-                            foreach(var piece in matchingPieces){
-                                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[0];
-                            }
-                        }
+                        UpdatePieceSprites(matchingPieces);
+
                         gamePieces = gamePieces.Union(matchingPieces).Union(breakablePieces).ToList();
                     }
                 }
+            }
+        }
+
+        if(isDeadlock && !isMovingPieceExist){
+            Debug.Log("deadlock!");
+            Invoke("CallShuffleBoard",1);
+            
+            return true;
+        }
+        return false;
+    }
+
+    private void CallShuffleBoard(){
+        EventManager.Instance.ShuffleBoard();
+    }
+
+    private void UpdatePieceSprites(List<GamePiece> matchingPieces)
+    {
+        foreach (var piece in matchingPieces)
+        {
+            int count = matchingPieces.Count;
+            if (count > A && count <= B)
+            {
+                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[1];
+            }
+            else if (count > B && count <= C)
+            {
+                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[2];
+            }
+            else if (count > C)
+            {
+                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[3];
+            }
+            else
+            {
+                piece.GetComponent<SpriteRenderer>().sprite = piece.DataSO.pieceSprites[0];
             }
         }
     }

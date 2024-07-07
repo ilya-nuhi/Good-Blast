@@ -34,7 +34,7 @@ public abstract class GamePiece : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void Move (int destX, int destY, float timeToMove)
+    public void Move (int destX, int destY, float timeToMove = 0.2f)
     {	
 		float addedDistance = targetDestination.y-destY;
 		targetDestination = new Vector3(destX, destY, 0);
@@ -71,8 +71,7 @@ public abstract class GamePiece : MonoBehaviour
 
 				yield return StartCoroutine(BouncePieceRoutine(initialStartY-targetDestination.y));
 
-    			PieceManager.Instance.PlaceGamePiece(this, Mathf.RoundToInt(targetDestination.x), Mathf.RoundToInt(targetDestination.y));
-
+    			transform.position = targetDestination;
     			break;
     		}
 
@@ -92,7 +91,7 @@ public abstract class GamePiece : MonoBehaviour
     	}
 
     	m_isMoving = false;
-		PieceManager.Instance.CheckPieceSprites();
+		PieceManager.Instance.CheckSpritesAndDeadlock();
     }
 
 	IEnumerator BouncePieceRoutine(float fallDistance)

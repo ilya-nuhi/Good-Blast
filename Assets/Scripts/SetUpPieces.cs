@@ -29,7 +29,7 @@ public class SetUpPieces : MonoBehaviour
         currentLevel = levelData;
         BoardManager.Instance.m_allGamePieces = new GamePiece[height,width];
         SetupGamePieces();
-        PieceManager.Instance.CheckPieceSprites();
+        PieceManager.Instance.CheckSpritesAndDeadlock();
     }
 
     void SetupGamePieces()

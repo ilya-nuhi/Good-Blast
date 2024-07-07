@@ -8,7 +8,7 @@ public class ObjectPool : Singleton<ObjectPool>
 
     [SerializeField] private GameObjectFactory gameObjectFactory;
 
-    public override void Awake()
+    protected override void Awake()
     {
         base.Awake();
         piecePoolDictionary = new Dictionary<string, Queue<GameObject>>();
